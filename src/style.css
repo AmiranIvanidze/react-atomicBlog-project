@@ -152,13 +152,13 @@ main li:hover {
   background-color: #fff4e6;
 }
 
-aside ul {
+/* aside ul {
   font-size: 90%;
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 2px;
-}
+} */
 
 aside li {
   border: 1px solid #ffe8cc;
