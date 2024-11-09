@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import {PostProvider,  usePosts, PostContext }from './PostContext'
 import { faker } from "@faker-js/faker";
 
 function createRandomPost() {
@@ -8,50 +9,18 @@ function createRandomPost() {
   };
 }
 
-const PostContext = createContext();
 
 function App() {
-  const [posts, setPosts] = useState(() =>
-    Array.from({ length: 30 }, () => createRandomPost())
-  );
-  const [searchQuery, setSearchQuery] = useState("");
   const [isFakeDark, setIsFakeDark] = useState(false);
 
-  // Derived state. These are the posts that will actually be displayed
-  const searchedPosts =
-    searchQuery.length > 0
-      ? posts.filter((post) =>
-          `${post.title} ${post.body}`
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
-        )
-      : posts;
-
-  function handleAddPost(post) {
-    setPosts((posts) => [post, ...posts]);
-  }
-
-  function handleClearPosts() {
-    setPosts([]);
-  }
-
-  // Whenever `isFakeDark` changes, we toggle the `fake-dark-mode` class on the HTML element (see in "Elements" dev tool).
   useEffect(
     function () {
-      document.documentElement.classList.toggle("fake-dark-mode");
+    document.documentElement.classList.toggle("fake-dark-mode");
     },
     [isFakeDark]
-  );
-
+);
   return (
-    <PostContext.Provider value={{ 
-      posts: searchedPosts,
-      onAddPost: handleAddPost,
-      onClearPosts: handleClearPosts,
-      searchQuery,
-      setSearchQuery,
-     }}>
-
+    
       <section>
         <button
           onClick={() => setIsFakeDark((isFakeDark) => !isFakeDark)}
@@ -59,24 +28,19 @@ function App() {
         >
           {isFakeDark ? "☀️" : "🌙"}
         </button>
+        <PostProvider>
+          <Header />
+          <Main />
+          <Archive />
+          <Footer />
+        </PostProvider>
 
-        <Header
-          posts={searchedPosts}
-          onClearPosts={handleClearPosts}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
-        <Main posts={searchedPosts} onAddPost={handleAddPost} />
-        <Archive onAddPost={handleAddPost} />
-        <Footer />
       </section>
-
-    </PostContext.Provider>
   );
 }
 
 function Header() {
-  const {onClearPosts} = useContext(PostContext)
+  const {onClearPosts} = usePosts();
   return (
     <header>
       <h1>
