@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { faker } from "@faker-js/faker";
 
 
@@ -38,16 +38,19 @@ function PostProvider({children}) {
         }
         
         // Whenever `isFakeDark` changes, we toggle the `fake-dark-mode` class on the HTML element (see in "Elements" dev tool).
-      
+        
+        const value = useMemo(() => {
+          return { 
+            posts: searchedPosts,
+            onAddPost: handleAddPost,
+            onClearPosts: handleClearPosts,
+            searchQuery,
+            setSearchQuery,
+           }
+        }, [searchedPosts, searchQuery]);
 
         return (
-            <PostContext.Provider value={{ 
-                posts: searchedPosts,
-                onAddPost: handleAddPost,
-                onClearPosts: handleClearPosts,
-                searchQuery,
-                setSearchQuery,
-               }}>
+            <PostContext.Provider value={value}>
             {children}
             </PostContext.Provider>
         )
